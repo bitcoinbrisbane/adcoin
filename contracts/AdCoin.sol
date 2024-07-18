@@ -13,7 +13,7 @@ struct Ad {
 contract AdCoin is ERC20 {
 
     mapping (uint256 => Ad) private adSpace;
-    uint256 public fee = 100 gwei;
+    uint256 public fee = 100000000000 wei;
 
     function name() public view override returns (string memory) {
         string memory _name = adSpace[block.timestamp].message;
@@ -39,13 +39,21 @@ contract AdCoin is ERC20 {
         return adSpace[time].start > _now && adSpace[time].start + adSpace[time].duration > _now;
     }
 
+    function rentAdSpaceNow(uint256 duration, string calldata message) external payable {
+        _rentAdSpace(block.timestamp, duration, message);
+    }
+
     function rentAdSpace(uint256 start, uint256 duration, string calldata message) external payable {
+        _rentAdSpace(start, duration, message);
+    }
+
+    function _rentAdSpace(uint256 start, uint256 duration, string calldata message) private {
         require(duration > 0, "AdCoin: duration must be greater than 0");
         require(!_isRented(start), "AdCoin: ad space is already rented");
         require(msg.value >= getFee(duration), "AdCoin: insufficient funds");
         
         Ad memory ad = Ad({
-            duration: duration,
+            duration: duration * 1 minutes,
             message: message,
             start: start
         });
