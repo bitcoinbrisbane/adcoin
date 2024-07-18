@@ -5,6 +5,14 @@
   "repository": "git@github.com:bitcoinbrisbane/adcoin.git",
   "author": "Lucas Cullen <lucas@bitcoinbrisbane.com.au>",
   "license": "MIT",
+  "scripts": {
+    "hh:build": "hardhat compile",
+    "hh:compile": "hardhat compile",
+    "hh:test": "hardhat test",
+    "hh:node": "npx hardhat node",
+    "hh:verify": "npx hardhat verify --network sepolia",
+    "hh:deploy": "npx hardhat ignition deploy ./ignition/modules/Coin.js --network sepolia"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
     "@nomicfoundation/hardhat-ethers": "^3.0.0",
@@ -23,6 +31,7 @@
     "typechain": "^8.3.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.2"
+    "@openzeppelin/contracts": "^5.0.2",
+    "dotenv": "^16.4.5"
   }
 }

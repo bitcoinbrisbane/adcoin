@@ -16,10 +16,9 @@ contract AdCoin is ERC20 {
     uint256 public fee = 100 gwei;
 
     function name() public view override returns (string memory) {
+        string memory _name = adSpace[block.timestamp].message;
 
-        string name = adSpace[block.timestamp].message;
-
-        return "ADC";
+        return _name;
     }
 
     constructor() ERC20("AdCoin", "ADC") {
@@ -30,12 +29,19 @@ contract AdCoin is ERC20 {
         return duration * fee;
     }
 
-    function checkAdSpace(uint256 start) public view returns (Ad memory) {
-        return adSpace[start];
+    function isRented(uint256 time) public view returns (bool) {
+        return _isRented(time);
     }
 
-    function buyAdSpace(uint256 start, uint256 duration, string calldata message) external payable {
+    function _isRented(uint256 time) private view returns (bool) {
+        // Check if the ad space is occupied at this time
+        uint256 _now = block.timestamp;
+        return adSpace[time].start > _now && adSpace[time].start + adSpace[time].duration > _now;
+    }
+
+    function rentAdSpace(uint256 start, uint256 duration, string calldata message) external payable {
         require(duration > 0, "AdCoin: duration must be greater than 0");
+        require(!_isRented(start), "AdCoin: ad space is already rented");
         require(msg.value >= getFee(duration), "AdCoin: insufficient funds");
         
         Ad memory ad = Ad({
@@ -43,6 +49,8 @@ contract AdCoin is ERC20 {
             message: message,
             start: start
         });
+
+        adSpace[start] = ad;
 
         emit AdSpacePurchased(msg.sender, duration, message);
     }
