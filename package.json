@@ -11,7 +11,7 @@
     "hh:test": "hardhat test",
     "hh:node": "npx hardhat node",
     "hh:verify": "npx hardhat verify --network sepolia",
-    "hh:deploy": "npx hardhat ignition deploy ./ignition/modules/Coin.js --network sepolia"
+    "hh:deploy": "npx hardhat ignition deploy ./ignition/modules/Coin.js --network sepolia --verify"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
