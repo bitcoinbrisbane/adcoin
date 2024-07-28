@@ -16,6 +16,15 @@ contract AdCoin is ERC20 {
     uint256 public fee = 100000000000 wei; // per day
     uint256 public nextAvailableDay;
     uint256 private constant START_HOUR = 12; // 12:00 PM
+    uint256 private holdersCount;
+
+    function holders () public view returns (uint256) {
+        return holdersCount;
+    }
+
+    function decimals() public pure override returns (uint8) {
+        return 0;
+    }
 
     function name() public view override returns (string memory) {
         uint256 day = getDayFromTimestamp(block.timestamp);
@@ -32,7 +41,18 @@ contract AdCoin is ERC20 {
     }
 
     constructor() ERC20("AdCoin", "ADC") {
-        _mint(msg.sender, 1000000 * 10 ** decimals());
+        _mint(msg.sender, 10000000);
+    }
+
+    function transfer(address recipient, uint256 amount) public override returns (bool) {
+        // Cannot transfer all of the tokens
+        require(balanceOf(msg.sender) >= amount + 1, "AdCoin: insufficient balance");
+
+        if (balanceOf(recipient) == 0) {
+            holdersCount++;
+        }
+
+        return super.transfer(recipient, amount);
     }
 
     function quote(uint256 duration) public view returns (uint256) {
