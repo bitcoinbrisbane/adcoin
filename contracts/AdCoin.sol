@@ -13,8 +13,7 @@ struct Ad {
 
 contract AdCoin is ERC20 {
     mapping(uint256 => Ad) private adSpace;
-    uint256 public fee = 100000000000 wei; // per day
-    uint256 public nextAvailableDay;
+    uint256 public fee = 10000000000 wei; // per day
     uint256 private constant START_HOUR = 12; // 12:00 PM
     uint256 private holdersCount;
 
@@ -55,8 +54,24 @@ contract AdCoin is ERC20 {
         return super.transfer(recipient, amount);
     }
 
+    function nextAvailableDay() public view returns (uint256) {
+        uint256 day = getDayFromTimestamp(block.timestamp);
+        uint256 nextDay = day + 1;
+
+        while (_isRented(nextDay)) {
+            nextDay++;
+        }
+
+        return nextDay;
+    }
+
     function quote(uint256 duration) public view returns (uint256) {
-        return duration * fee;
+        return _quote(duration);
+    }
+
+    function _quote(uint256 duration) private view returns (uint256) {
+        uint256 _holders = holdersCount / 1000 + 1;
+        return duration * fee * _holders;
     }
 
     function isRentedNow() public view returns (bool) {
