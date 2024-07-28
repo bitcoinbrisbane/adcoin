@@ -126,6 +126,7 @@ contract AdCoin is ERC20 {
     }
 
     function shill(address to) public {
+        require(balanceOf(to) == 0, "AdCoin: address already has tokens");
         _mint(to, 1);
         _mint(owner, 1);
     }
