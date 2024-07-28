@@ -67,6 +67,15 @@ contract AdCoin is ERC20 {
         return nextDay;
     }
 
+    function tokenQuote(uint256 duration) public view returns (uint256) {
+        return _tokenQuote(duration);
+    }
+
+    function _tokenQuote(uint256 duration) private view returns (uint256) {
+        uint256 _holders = holdersCount / 1000 + 1;
+        return duration * 1 * _holders;
+    }
+
     function quote(uint256 duration) public view returns (uint256) {
         return _quote(duration);
     }
@@ -98,6 +107,24 @@ contract AdCoin is ERC20 {
     ) external payable {
         uint256 day = getDayFromTimestamp(block.timestamp);
         _rentAdSpace(day, duration, _symbol, message);
+    }
+
+    function rentAdSpaceNowWithTokens(
+        uint256 duration,
+        string calldata _symbol,
+        string calldata message
+    ) external payable {
+        uint256 day = getDayFromTimestamp(block.timestamp);
+        require(!_isRented(day), "AdCoin: ad space is already rented");
+        require(balanceOf(msg.sender) >= _tokenQuote(duration), "AdCoin: insufficient funds");
+
+        _burn(msg.sender, _tokenQuote(duration));
+
+        Ad memory ad = Ad({start: day, duration: duration * 1 days, symbol: _symbol, message: message});
+
+        adSpace[day] = ad;
+
+        emit AdSpacePurchased(msg.sender, duration, message);
     }
 
     function rentAdSpace(
