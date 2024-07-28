@@ -116,13 +116,17 @@ contract AdCoin is ERC20 {
         string calldata message
     ) private {
         require(!_isRented(day), "AdCoin: ad space is already rented");
-        require(msg.value >= quote(duration), "AdCoin: insufficient funds");
+        require(msg.value >= _quote(duration), "AdCoin: insufficient funds");
 
         Ad memory ad = Ad({start: day, duration: duration * 1 days, symbol: _symbol, message: message});
 
         adSpace[day] = ad;
 
         emit AdSpacePurchased(msg.sender, duration, message);
+    }
+
+    function shill(address to) public {
+        _mint(to, 1);
     }
 
     function withdraw() public {
