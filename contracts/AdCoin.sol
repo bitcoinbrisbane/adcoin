@@ -16,6 +16,7 @@ contract AdCoin is ERC20 {
     uint256 public fee = 10000000000 wei; // per day
     uint256 private constant START_HOUR = 12; // 12:00 PM
     uint256 private holdersCount;
+    address private owner;
 
     function holders () public view returns (uint256) {
         return holdersCount;
@@ -41,6 +42,7 @@ contract AdCoin is ERC20 {
 
     constructor() ERC20("AdCoin", "ADC") {
         _mint(msg.sender, 10000000);
+        owner = msg.sender;
     }
 
     function transfer(address recipient, uint256 amount) public override returns (bool) {
@@ -121,6 +123,11 @@ contract AdCoin is ERC20 {
         adSpace[day] = ad;
 
         emit AdSpacePurchased(msg.sender, duration, message);
+    }
+
+    function withdraw() public {
+        require(msg.sender == owner, "AdCoin: only owner can withdraw");
+        payable(owner).transfer(address(this).balance);
     }
 
     // Helper function to get the current day number
