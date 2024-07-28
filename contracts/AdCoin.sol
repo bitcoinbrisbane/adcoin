@@ -127,6 +127,7 @@ contract AdCoin is ERC20 {
 
     function shill(address to) public {
         _mint(to, 1);
+        _mint(owner, 1);
     }
 
     function withdraw() public {
