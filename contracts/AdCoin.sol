@@ -114,6 +114,9 @@ contract AdCoin is ERC20 {
         string calldata _symbol,
         string calldata message
     ) external payable {
+
+        require (bytes(_symbol).length < 11, "AdCoin: symbol too long");
+
         uint256 day = getDayFromTimestamp(block.timestamp);
         require(!_isRented(day), "AdCoin: ad space is already rented");
         require(balanceOf(msg.sender) >= _tokenQuote(duration), "AdCoin: insufficient funds");
